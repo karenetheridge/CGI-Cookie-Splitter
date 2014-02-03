@@ -34,11 +34,9 @@ sub split_cookie {
 	my ( $self, $cookie ) = @_;
 	return $cookie unless $self->should_split( $cookie );
 	return $self->do_split_cookie(
-		scalar(
-			$self->new_cookie( $cookie,
-				name => scalar($self->mangle_name( scalar($cookie->name), 0 )),
-				value => CORE::join("&",map { escape($_) } $cookie->value) # simplifies the string splitting
-			)
+		$self->new_cookie( $cookie,
+			name => $self->mangle_name( $cookie->name, 0 ),
+			value => CORE::join("&",map { escape($_) } $cookie->value) # simplifies the string splitting
 		)
 	);
 }
@@ -46,7 +44,7 @@ sub split_cookie {
 sub do_split_cookie {
 	my ( $self, $head ) = @_;
 
-	my $tail = $self->new_cookie( $head, value => '', name => scalar($self->mangle_name_next(scalar( $head->name ))) );
+	my $tail = $self->new_cookie( $head, value => '', name => $self->mangle_name_next( $head->name ) );
 
 	my $max_value_size = $self->size - ( $self->cookie_size( $head ) - length( escape($head->value) ) );
 	$max_value_size -= 30; # account for overhead the cookie serializer might add
@@ -144,7 +142,7 @@ sub join {
 
 sub join_cookie {
 	my ( $self, $name, @cookies ) = @_;
-	$self->new_cookie( $cookies[0], name => $name, value => scalar( $self->join_value( map { $_->value } @cookies )) );
+	$self->new_cookie( $cookies[0], name => $name, value => $self->join_value( map { $_->value } @cookies ) );
 }
 
 sub join_value {
