@@ -60,7 +60,7 @@ my @cases = ( # big numbers are used to mask the overhead of the other fields
 		num_cookies => 3,
 		cookie => {
 			-name => "f",
-			secure => 1,
+			-secure => 1,
 			-value => { foo => ("a" x 1000), bar => ("b" x 1000) },
 		},
 	},
@@ -120,7 +120,7 @@ foreach my $class ( @cookie_classes ) {
 
 	while( @all_joined and my($joined, $orig) = ( shift @all_joined, shift @all_cookies ) ) {
 		foreach my $field ( qw/name value domain path secure/ ) {
-			is_deeply( eval { [ $joined->$field ] }, eval { [ $orig->$field ] }, "'$field' is the same" );
+			is_deeply( [ eval { $joined->$field } ], [ eval { $orig->$field } ], "'$field' is the same" );
 		}
 	}
 }

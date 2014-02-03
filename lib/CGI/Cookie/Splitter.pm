@@ -34,9 +34,11 @@ sub split_cookie {
 	my ( $self, $cookie ) = @_;
 	return $cookie unless $self->should_split( $cookie );
 	return $self->do_split_cookie(
-		$self->new_cookie( $cookie,
-			name => $self->mangle_name( $cookie->name, 0 ),
-			value => CORE::join("&",map { escape($_) } $cookie->value) # simplifies the string splitting
+		scalar(
+			$self->new_cookie( $cookie,
+				name => scalar($self->mangle_name( scalar($cookie->name), 0 )),
+				value => CORE::join("&",map { escape($_) } $cookie->value) # simplifies the string splitting
+			)
 		)
 	);
 }
@@ -44,7 +46,7 @@ sub split_cookie {
 sub do_split_cookie {
 	my ( $self, $head ) = @_;
 
-	my $tail = $self->new_cookie( $head, value => '', name => $self->mangle_name_next( $head->name ) );
+	my $tail = $self->new_cookie( $head, value => '', name => scalar($self->mangle_name_next(scalar( $head->name ))) );
 
 	my $max_value_size = $self->size - ( $self->cookie_size( $head ) - length( escape($head->value) ) );
 	$max_value_size -= 30; # account for overhead the cookie serializer might add
@@ -101,12 +103,14 @@ sub cookie_size {
 sub new_cookie {
 	my ( $self, $cookie, %params ) = @_;
 
+    my %out_params;
 	for (qw/name secure path domain expires value/) {
-		next if exists $params{$_};
-		$params{"-$_"} = $cookie->$_;
+		$out_params{"-$_"} = (exists($params{$_})
+			? $params{$_} : $cookie->$_
+		);
 	}
 
-	blessed($cookie)->new( %params );
+	blessed($cookie)->new( %out_params );
 }
 
 sub should_split {
@@ -129,7 +133,7 @@ sub join {
 		}
 	}
 
-	foreach my $name ( keys %split ) { 
+	foreach my $name ( sort { $a cmp $b } keys %split ) {
 		my $split_cookie = $split{$name};
 		croak "The cookie $name is missing some chunks" if grep { !defined } @$split_cookie;
 		push @ret, $self->join_cookie( $name => @$split_cookie );
@@ -140,7 +144,7 @@ sub join {
 
 sub join_cookie {
 	my ( $self, $name, @cookies ) = @_;
-	$self->new_cookie( $cookies[0], name => $name, value => $self->join_value( map { $_->value } @cookies ) );
+	$self->new_cookie( $cookies[0], name => $name, value => scalar( $self->join_value( map { $_->value } @cookies )) );
 }
 
 sub join_value {
@@ -151,12 +155,12 @@ sub join_value {
 sub mangle_name_next {
 	my ( $self, $mangled ) = @_;
 	my ( $name, $index ) = $self->demangle_name( $mangled );
-	$self->mangle_name( $name, $index+1 ); # can't trust magic incr because it might overflow and fudge 'chunk'
+	$self->mangle_name( $name, 1 + ((defined($index) ? $index : 0)) ); # can't trust magic incr because it might overflow and fudge 'chunk'
 }
 
 sub mangle_name {
 	my ( $self, $name, $index ) = @_;
-	return sprintf '_bigcookie_%s_chunk%d', $name, $index;
+	return sprintf '_bigcookie_%s_chunk%d', +(defined($name) ? $name : ''), $index;
 }
 
 sub demangle_name {
