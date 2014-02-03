@@ -1,14 +1,4 @@
-\.DS_Store$
-^_build
-^Build$
-^Makefile$
-^blib
-~$
-\.bak$
-\.sw.$
-^cover_db
-^MANIFEST\.SKIP$
-\.tar\.gz$
-^test_mpegs
-^_darcs
-^Build.PL$
+#!include_default
+### DEFAULT MANIFEST.SKIP ENDS HERE ####
+^CGI-Cookie-Splitter\.\d+\.tar\.gz$
+^CGI-Cookie-Splitter\.\d+$
