@@ -1,3 +1,7 @@
+0.03
+        - fix test failures due to hash randomization (RT#81612), and some
+          unintialized warnings (thanks, Shlomi Fish!)
+
 0.02
 	- Change the CGI::Simple prereq so it works better on debian
 	- Increase the serialization overhead futz number
