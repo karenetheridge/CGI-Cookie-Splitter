@@ -9,159 +9,159 @@ use CGI::Simple::Util qw/escape unescape/;
 use Carp qw/croak/;
 
 sub new {
-	my ( $class, %params ) = @_;
+    my ( $class, %params ) = @_;
 
-	$params{size} = 4096 unless exists $params{size};
+    $params{size} = 4096 unless exists $params{size};
 
-	croak "size has to be a positive integer ($params{size} is invalid)"
-		unless $params{size} =~ /^\d+$/ and $params{size} > 1;
+    croak "size has to be a positive integer ($params{size} is invalid)"
+        unless $params{size} =~ /^\d+$/ and $params{size} > 1;
 
-	bless \%params, $class;
+    bless \%params, $class;
 }
 
 sub size { $_[0]{size} }
 
 sub split {
-	my ( $self, @cookies ) = @_;
-	map { $self->split_cookie($_) } @cookies;
+    my ( $self, @cookies ) = @_;
+    map { $self->split_cookie($_) } @cookies;
 }
 
 sub split_cookie {
-	my ( $self, $cookie ) = @_;
-	return $cookie unless $self->should_split( $cookie );
-	return $self->do_split_cookie(
-		$self->new_cookie( $cookie,
-			name => $self->mangle_name( $cookie->name, 0 ),
-			value => CORE::join("&",map { escape($_) } $cookie->value) # simplifies the string splitting
-		)
-	);
+    my ( $self, $cookie ) = @_;
+    return $cookie unless $self->should_split( $cookie );
+    return $self->do_split_cookie(
+        $self->new_cookie( $cookie,
+            name => $self->mangle_name( $cookie->name, 0 ),
+            value => CORE::join("&",map { escape($_) } $cookie->value) # simplifies the string splitting
+        )
+    );
 }
 
 sub do_split_cookie {
-	my ( $self, $head ) = @_;
+    my ( $self, $head ) = @_;
 
-	my $tail = $self->new_cookie( $head, value => '', name => $self->mangle_name_next( $head->name ) );
+    my $tail = $self->new_cookie( $head, value => '', name => $self->mangle_name_next( $head->name ) );
 
-	my $max_value_size = $self->size - ( $self->cookie_size( $head ) - length( escape($head->value) ) );
-	$max_value_size -= 30; # account for overhead the cookie serializer might add
+    my $max_value_size = $self->size - ( $self->cookie_size( $head ) - length( escape($head->value) ) );
+    $max_value_size -= 30; # account for overhead the cookie serializer might add
 
-	die "Internal math error, please file a bug for CGI::Cookie::Splitter: max size should be > 0, but is $max_value_size (perhaps other attrs are too big?)"
-		unless ( $max_value_size > 0 );
+    die "Internal math error, please file a bug for CGI::Cookie::Splitter: max size should be > 0, but is $max_value_size (perhaps other attrs are too big?)"
+        unless ( $max_value_size > 0 );
 
-	my ( $head_v, $tail_v ) = $self->split_value( $max_value_size, $head->value );
+    my ( $head_v, $tail_v ) = $self->split_value( $max_value_size, $head->value );
 
-	$head->value( $head_v );
-	$tail->value( $tail_v );
+    $head->value( $head_v );
+    $tail->value( $tail_v );
 
-	die "Internal math error, please file a bug for CGI::Cookie::Splitter"
-		unless $self->cookie_size( $head ) <= $self->size; # 10 is not enough overhead
+    die "Internal math error, please file a bug for CGI::Cookie::Splitter"
+        unless $self->cookie_size( $head ) <= $self->size; # 10 is not enough overhead
 
-	return $head unless $tail_v;
-	return ( $head, $self->do_split_cookie( $tail ) );
+    return $head unless $tail_v;
+    return ( $head, $self->do_split_cookie( $tail ) );
 }
 
 sub split_value {
-	my ( $self, $max_size, $value ) = @_;
+    my ( $self, $max_size, $value ) = @_;
 
-	my $adjusted_size = $max_size;
+    my $adjusted_size = $max_size;
 
-	my ( $head, $tail );
+    my ( $head, $tail );
 
-	return ( $value, '' ) if length($value) <= $adjusted_size;
+    return ( $value, '' ) if length($value) <= $adjusted_size;
 
-	split_value: {
-		croak "Can't reduce the size of the cookie anymore (adjusted = $adjusted_size, max = $max_size)" unless $adjusted_size > 0;
+    split_value: {
+        croak "Can't reduce the size of the cookie anymore (adjusted = $adjusted_size, max = $max_size)" unless $adjusted_size > 0;
 
-		$head = substr( $value, 0, $adjusted_size );
-		$tail = substr( $value, $adjusted_size );
+        $head = substr( $value, 0, $adjusted_size );
+        $tail = substr( $value, $adjusted_size );
 
-		if ( length(my $escaped = escape($head)) > $max_size ) {
-			my $adjustment = int( ( length($escaped) - length($head) ) / 3 ) + 1;
+        if ( length(my $escaped = escape($head)) > $max_size ) {
+            my $adjustment = int( ( length($escaped) - length($head) ) / 3 ) + 1;
 
-			die "Internal math error, please file a bug for CGI::Cookie::Splitter"
-				unless $adjustment;
+            die "Internal math error, please file a bug for CGI::Cookie::Splitter"
+                unless $adjustment;
 
-			$adjusted_size -= $adjustment;
-			redo split_value;
-		}
-	}
+            $adjusted_size -= $adjustment;
+            redo split_value;
+        }
+    }
 
-	return ( $head, $tail );
+    return ( $head, $tail );
 }
 
 sub cookie_size {
-	my ( $self, $cookie ) = @_;
-	length( $cookie->as_string );
+    my ( $self, $cookie ) = @_;
+    length( $cookie->as_string );
 }
 
 sub new_cookie {
-	my ( $self, $cookie, %params ) = @_;
+    my ( $self, $cookie, %params ) = @_;
 
     my %out_params;
-	for (qw/name secure path domain expires value/) {
-		$out_params{"-$_"} = (exists($params{$_})
-			? $params{$_} : $cookie->$_
-		);
-	}
+    for (qw/name secure path domain expires value/) {
+        $out_params{"-$_"} = (exists($params{$_})
+            ? $params{$_} : $cookie->$_
+        );
+    }
 
-	blessed($cookie)->new( %out_params );
+    blessed($cookie)->new( %out_params );
 }
 
 sub should_split {
-	my ( $self, $cookie ) = @_;
-	$self->cookie_size( $cookie ) > $self->size;
+    my ( $self, $cookie ) = @_;
+    $self->cookie_size( $cookie ) > $self->size;
 }
 
 sub join {
-	my ( $self, @cookies ) = @_;
+    my ( $self, @cookies ) = @_;
 
-	my %split;
-	my @ret;
+    my %split;
+    my @ret;
 
-	foreach my $cookie ( @cookies ) {
-		my ( $name, $index ) = $self->demangle_name( $cookie->name );
-		if ( $name ) {
-			$split{$name}[$index] = $cookie;
-		} else {
-			push @ret, $cookie;
-		}
-	}
+    foreach my $cookie ( @cookies ) {
+        my ( $name, $index ) = $self->demangle_name( $cookie->name );
+        if ( $name ) {
+            $split{$name}[$index] = $cookie;
+        } else {
+            push @ret, $cookie;
+        }
+    }
 
-	foreach my $name ( sort { $a cmp $b } keys %split ) {
-		my $split_cookie = $split{$name};
-		croak "The cookie $name is missing some chunks" if grep { !defined } @$split_cookie;
-		push @ret, $self->join_cookie( $name => @$split_cookie );
-	}
+    foreach my $name ( sort { $a cmp $b } keys %split ) {
+        my $split_cookie = $split{$name};
+        croak "The cookie $name is missing some chunks" if grep { !defined } @$split_cookie;
+        push @ret, $self->join_cookie( $name => @$split_cookie );
+    }
 
-	return @ret;
+    return @ret;
 }
 
 sub join_cookie {
-	my ( $self, $name, @cookies ) = @_;
-	$self->new_cookie( $cookies[0], name => $name, value => $self->join_value( map { $_->value } @cookies ) );
+    my ( $self, $name, @cookies ) = @_;
+    $self->new_cookie( $cookies[0], name => $name, value => $self->join_value( map { $_->value } @cookies ) );
 }
 
 sub join_value {
-	my ( $self, @values ) = @_;
-	return [ map { unescape($_) } split('&', CORE::join("", @values)) ];
+    my ( $self, @values ) = @_;
+    return [ map { unescape($_) } split('&', CORE::join("", @values)) ];
 }
 
 sub mangle_name_next {
-	my ( $self, $mangled ) = @_;
-	my ( $name, $index ) = $self->demangle_name( $mangled );
-	$self->mangle_name( $name, 1 + ((defined($index) ? $index : 0)) ); # can't trust magic incr because it might overflow and fudge 'chunk'
+    my ( $self, $mangled ) = @_;
+    my ( $name, $index ) = $self->demangle_name( $mangled );
+    $self->mangle_name( $name, 1 + ((defined($index) ? $index : 0)) ); # can't trust magic incr because it might overflow and fudge 'chunk'
 }
 
 sub mangle_name {
-	my ( $self, $name, $index ) = @_;
-	return sprintf '_bigcookie_%s_chunk%d', +(defined($name) ? $name : ''), $index;
+    my ( $self, $name, $index ) = @_;
+    return sprintf '_bigcookie_%s_chunk%d', +(defined($name) ? $name : ''), $index;
 }
 
 sub demangle_name {
-	my ( $self, $mangled_name ) = @_;
-	my ( $name, $index ) = ( $mangled_name =~ /^_bigcookie_(.+?)_chunk(\d+)$/ );
+    my ( $self, $mangled_name ) = @_;
+    my ( $name, $index ) = ( $mangled_name =~ /^_bigcookie_(.+?)_chunk(\d+)$/ );
 
-	return ( $name, $index );
+    return ( $name, $index );
 }
 
 __PACKAGE__;
@@ -172,15 +172,15 @@ __END__
 
 =head1 SYNOPSIS
 
-	use CGI::Cookie::Splitter;
+    use CGI::Cookie::Splitter;
 
-	my $splitter = CGI::Cookie::Splitter->new(
-		size => 123, # defaults to 4096
-	);
+    my $splitter = CGI::Cookie::Splitter->new(
+        size => 123, # defaults to 4096
+    );
 
-	@small_cookies = $splitter->split( @big_cookies );
+    @small_cookies = $splitter->split( @big_cookies );
 
-	@big_cookies = $splitter->join( @small_cookies );
+    @big_cookies = $splitter->join( @small_cookies );
 
 =head1 DESCRIPTION
 
