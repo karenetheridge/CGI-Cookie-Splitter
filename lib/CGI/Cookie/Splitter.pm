@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 package CGI::Cookie::Splitter;
 # ABSTRACT: Split big cookies into smaller ones.
 
