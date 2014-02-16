@@ -1,4 +1,0 @@
-#!include_default
-### DEFAULT MANIFEST.SKIP ENDS HERE ####
-^CGI-Cookie-Splitter\.\d+\.tar\.gz$
-^CGI-Cookie-Splitter\.\d+$

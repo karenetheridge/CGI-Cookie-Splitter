@@ -1,0 +1,4 @@
+/.build/
+!.gitignore
+/CGI-Cookie-Splitter-*/
+/CGI-Cookie-Splitter-*.tar.gz
