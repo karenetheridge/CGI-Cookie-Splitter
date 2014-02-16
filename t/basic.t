@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More 'no_plan';
+use Test::More;
 
 use ok "CGI::Cookie::Splitter";
 
@@ -122,3 +122,5 @@ foreach my $class ( @cookie_classes ) {
 		}
 	}
 }
+
+done_testing;
