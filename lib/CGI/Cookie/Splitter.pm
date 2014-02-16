@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 package CGI::Cookie::Splitter;
+# ABSTRACT: Split big cookies into smaller ones.
 
 use strict;
 use warnings;
@@ -171,10 +172,6 @@ __END__
 
 =pod
 
-=head1 NAME
-
-CGI::Cookie::Splitter - Split big cookies into smaller ones.
-
 =head1 SYNOPSIS
 
 	use CGI::Cookie::Splitter;
@@ -252,22 +249,4 @@ L<CGI::Cookie>, L<CGI::Simple::Cookie>, L<http://www.cookiecutter.com/>,
 L<http://perlcabal.org/~gaal/metapatch/images/copper-moose-cutter.jpg>,
 RFC 2109
 
-=head1 VERSION CONTROL
-
-This module is maintained using Darcs. You can get the latest version from
-L<http://nothingmuch.woobling.org/CGI-Cookie-Splitter/>, and use C<darcs send>
-to commit changes.
-
-=head1 AUTHOR
-
-Yuval Kogman, C<nothingmuch@woobling.org>
-
-=head1 COPYRIGHT & LICENCE
-
-        Copyright (c) 2006 the aforementioned authors. All rights
-        reserved. This program is free software; you can redistribute
-        it and/or modify it under the same terms as Perl itself.
-
 =cut
-
-
