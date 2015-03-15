@@ -1,3 +1,4 @@
+/.ackrc
 /.build/
 !.gitignore
 /CGI-Cookie-Splitter-*/
