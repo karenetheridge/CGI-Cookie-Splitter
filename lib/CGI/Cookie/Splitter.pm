@@ -1,6 +1,8 @@
 package CGI::Cookie::Splitter;
 # ABSTRACT: Split big cookies into smaller ones.
 
+our $VERSION = '0.05';
+
 use strict;
 use warnings;
 
