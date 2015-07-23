@@ -9,7 +9,7 @@ use warnings;
 use Scalar::Util qw/blessed/;
 use CGI::Simple::Util qw/escape unescape/;
 use Carp qw/croak/;
-use namespace::clean;
+use namespace::clean 0.19;
 
 sub new {
     my ( $class, %params ) = @_;
