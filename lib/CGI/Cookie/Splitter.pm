@@ -205,7 +205,7 @@ The only supported parameters right now are C<size>. It defaults to 4096.
 =item split @cookies
 
 This method accepts a list of CGI::Cookie objects (or look alikes) and returns
-a list of CGI::Cookies.
+a list of L<CGI::Cookie>s.
 
 Whenever an object with a total size that is bigger than the limit specified at
 construction time is encountered it is replaced in the result list with several
@@ -246,8 +246,11 @@ using a different criteria then you should look into that.
 
 =head1 SEE ALSO
 
-L<CGI::Cookie>, L<CGI::Simple::Cookie>, L<http://www.cookiecutter.com/>,
-L<http://perlcabal.org/~gaal/metapatch/images/copper-moose-cutter.jpg>,
-RFC 2109
+=for :list
+* L<CGI::Cookie>
+* L<CGI::Simple::Cookie>
+* L<http://www.cookiecutter.com/>
+* L<http://perlcabal.org/~gaal/metapatch/images/copper-moose-cutter.jpg>
+* L<RFC 2109|https://www.ietf.org/rfc/rfc2109.txt>
 
 =cut
