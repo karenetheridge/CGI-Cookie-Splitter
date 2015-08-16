@@ -1,5 +1,6 @@
 /.ackrc
 /.build/
-!.gitignore
+!/.gitignore
+/.latest
 /CGI-Cookie-Splitter-*/
 /CGI-Cookie-Splitter-*.tar.gz
