@@ -194,15 +194,15 @@ larger cookies than that it's considered a no-no.
 This module provides a pretty simple interface to generate small cookies that
 are under a certain limit, without wasting too much effort.
 
-=head1 METHODS
+=method new
 
-=over 4
-
-=item new %params
+    $splitter = CGI::Cookie::Splitter->new(%params)
 
 The only supported parameters right now are C<size>. It defaults to 4096.
 
-=item split @cookies
+=method split
+
+    @cookies = $splitter->split(@cookies)
 
 This method accepts a list of CGI::Cookie objects (or look alikes) and returns
 a list of L<CGI::Cookie>s.
@@ -212,21 +212,31 @@ construction time is encountered it is replaced in the result list with several
 objects of the same class, which are assigned serial names and have a smaller
 size and the same domain/path/expires/secure parameters.
 
-=item join @cookies
+=method join
+
+    $cookie = $splitter->join(@cookies)
 
 This is the inverse of C<split>.
 
-=item should_split $cookie
+=method should_split
+
+    $splitter->should_split($cookie)
 
 Whether or not the cookie should be split
 
-=item mangle_name_next $name
+=method mangle_name_next
+
+    $splitter->mangle_name_next($name)
 
 Demangles name, increments the index and remangles.
 
-=item mangle_name $name, $index
+=method mangle_name
 
-=item demangle_name $mangled_name
+    $splitter->mangle_name($name, $index)
+
+=method demangle_name
+
+    $splitter->demangle_name($mangled_name)
 
 These methods encapsulate a name mangling scheme for changing the cookie names
 to allo wa 1:n relationship.
@@ -236,8 +246,6 @@ are not mangled.
 
 As long as your cookie names don't start with the substring C<_bigcookie_> you
 should be OK ;-)
-
-=back
 
 =head1 SUBCLASSING
 
