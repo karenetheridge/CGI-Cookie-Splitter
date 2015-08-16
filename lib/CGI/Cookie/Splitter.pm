@@ -187,7 +187,7 @@ __END__
 
 =head1 DESCRIPTION
 
-RFC 2109 reccomends that the minimal cookie size supported by the client is
+RFC 2109 recommends that the minimal cookie size supported by the client is
 4096 bytes. This has become a pretty standard value, and if your server sends
 larger cookies than that it's considered a no-no.
 
@@ -204,7 +204,7 @@ The only supported parameters right now are C<size>. It defaults to 4096.
 
     @cookies = $splitter->split(@cookies)
 
-This method accepts a list of CGI::Cookie objects (or look alikes) and returns
+This method accepts a list of CGI::Cookie objects (or lookalikes) and returns
 a list of L<CGI::Cookie>s.
 
 Whenever an object with a total size that is bigger than the limit specified at
@@ -228,6 +228,8 @@ Whether or not the cookie should be split
 
     $splitter->mangle_name_next($name)
 
+=for stopwords demangles remangles
+
 Demangles name, increments the index and remangles.
 
 =method mangle_name
@@ -239,7 +241,7 @@ Demangles name, increments the index and remangles.
     $splitter->demangle_name($mangled_name)
 
 These methods encapsulate a name mangling scheme for changing the cookie names
-to allo wa 1:n relationship.
+to allow a 1:n relationship.
 
 The default mangling behavior is not 100% safe because cookies with a safe size
 are not mangled.
