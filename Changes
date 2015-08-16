@@ -1,6 +1,6 @@
 Revision history for CGI-Cookie-Splitter
 
-{{$NEXT}}
+0.05      2015-08-16 05:58:41Z
         - bump namespace::clean prereq to guarantee needed Package::Stash
           interfaces
 
